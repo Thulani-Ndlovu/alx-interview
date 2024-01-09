@@ -4,17 +4,16 @@
 
 def canUnlockAll(boxes):
     """Return True if all boxes can be opened, else return False"""
-    def dfs(box, visitedBox):
-        """Depth First Search to traverse the boxes"""
-        visitedBox[box] = True
-        for key in boxes[box]:
-            if not visitedBox[key]:
-                dfs(key, visitedBox)
-
     numberOfBoxes = len(boxes)
-    visitedBoxes = [False] * numberOfBoxes
-    initialBox = 0
+    visitedBoxes = set()
 
-    dfs(initialBox, visitedBoxes)
+    def dfs(idx):
+        """Depth-first search"""
+        if idx in visitedBoxes or idx >= numberOfBoxes or idx < 0:
+            return
+        visitedBoxes.add(idx)
+        for key in boxes[idx]:
+            dfs(key)
 
-    return all(visitedBoxes)
+    dfs(0)
+    return numberOfBoxes == len(visitedBoxes)
