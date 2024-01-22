@@ -6,6 +6,8 @@ def minOperations(n):
     '''Returns number of operations'''
     if n <= 0:
         return 0
+    if not isinstance(n, int):
+        return 0
 
     def dp(operation):
         '''Depth search'''
