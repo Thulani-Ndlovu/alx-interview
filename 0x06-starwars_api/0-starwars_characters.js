@@ -1,28 +1,26 @@
 #!/usr/bin/node
-import axios from 'axios';
-
+const request = require('request');
 const API_URL = 'https://swapi-api.hbtn.io/api';
 
 
-async function getFilmCharacters(filmId) {
-  try {
-    const { data } = await axios.get(`${API_URL}/films/${filmId}/`);
-    const charactersURL = data.characters;
-
-    const charactersName = await Promise.all(
-      charactersURL.map(async (url) => {
-        const { data: characterData } = await axios.get(url);
-        return characterData.name;
-      })
-    );
-
-    console.log(charactersName.join('\n'));
-  } catch (error) {
-    console.error(error.message);
-  }
-}
-
 if (process.argv.length > 2) {
-  const filmId = process.argv[2];
-  getFilmCharacters(filmId);
+  request(`${API_URL}/films/${process.argv[2]}/`, (err, _, body) => {
+    if (err) {
+      console.log(err);
+    }
+    const charactersURL = JSON.parse(body).characters;
+    const charactersName = charactersURL.map(
+      url => new Promise((resolve, reject) => {
+        request(url, (promiseErr, __, charactersReqBody) => {
+          if (promiseErr) {
+            reject(promiseErr);
+          }
+          resolve(JSON.parse(charactersReqBody).name);
+        });
+      }));
+
+      Promise.all(charactersName)
+      .then(names => console.log(names.join('\n')))
+      .catch(allErr => console.log(allErr));
+  });
 }
