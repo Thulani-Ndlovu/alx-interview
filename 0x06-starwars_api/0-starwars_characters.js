@@ -2,7 +2,6 @@
 const request = require('request');
 const API_URL = 'https://swapi-api.hbtn.io/api';
 
-
 if (process.argv.length > 2) {
   request(`${API_URL}/films/${process.argv[2]}/`, (err, _, body) => {
     if (err) {
@@ -19,7 +18,7 @@ if (process.argv.length > 2) {
         });
       }));
 
-      Promise.all(charactersName)
+    Promise.all(charactersName)
       .then(names => console.log(names.join('\n')))
       .catch(allErr => console.log(allErr));
   });
